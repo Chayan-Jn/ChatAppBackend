@@ -23,7 +23,7 @@ const messageController = async (req,res)=>{
         console.log("Sender is ",sender)
         const usernames = [receiver.username,sender.username];
         const chatId = usernames.sort().join('_');
-        const text = req.body;
+        const {text} = req.body;
 
         let imageUrl = null;
         let publicId = null;
@@ -32,12 +32,6 @@ const messageController = async (req,res)=>{
             const result = await uploadToCloudinary(req.file.buffer, req.file.mimetype);
             imageUrl = result.url;
             publicId = result.publicId;
-        }
-        else{
-            return res.status(500).json({
-                success:false,
-                message:"No file Found"
-            })
         }
         
         if(!text && !imageUrl){ // If both are absent, cant send msg
