@@ -1,9 +1,21 @@
 const cloudinary = require('../config/cloudinary');
 
+// Why base64?
+// You convert the buffer to a base64 data URI, because:
+// It’s a string Cloudinary can understand.
+// It includes the MIME type (image/jpeg, etc.) along with the data.
+// It avoids saving the file to disk, keeping everything in memory.
 
-const uploadToCloudinary = async (filePath)=>{
+// Converts your raw buffer into a base64-encoded string:
+// fileBuffer.toString('base64')
+
+// data:image/jpeg;base64,
+// This tells Cloudinary:
+// ➡️ “The content you’re getting is a JPEG image encoded in base64.”
+const uploadToCloudinary = async (fileBuffer,mimetype)=>{
     try{
-        const result = await cloudinary.uploader.upload(filePath);
+        const base64 = `data:${mimetype};base64,${fileBuffer.toString('base64')}`;
+        const result = await cloudinary.uploader.upload(base64);
         return {
             url:result.secure_url,
             publicId:result.publicId
