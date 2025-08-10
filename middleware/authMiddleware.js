@@ -4,8 +4,9 @@ const jwt = require('jsonwebtoken');
 
 const authMiddleware = async (req,res,next)=>{
     console.log("Auth middleware runs ")
-    const authHeader = req.headers['authorization'];
-    const token = authHeader && authHeader.split(" ")[1];
+    // const authHeader = req.headers['authorization'];
+    // const token = authHeader && authHeader.split(" ")[1];
+    const token = req.cookies?.token;
     if(!token){
         return res.status(400).json({
             success:false,

@@ -42,7 +42,7 @@ const registerUser = async (req, res) => {
 
 const loginUser = async (req, res) => {
     try {
-        console.log("body is ",req.body)
+        
         const { username, password } = req.body;
         const userExists = await User.findOne({ username: username });
         if (!userExists) {
@@ -69,10 +69,17 @@ const loginUser = async (req, res) => {
         {   expiresIn:'50m'}
         )
 
+        // Set token in HttpOnly cookie
+        res.cookie('token', accessToken, {
+            httpOnly: true, // JS cannot access this cookie
+            secure: false, // send cookie only over HTTPS in prod. If its development, secure is false 
+            sameSite: 'lax', // CSRF protection
+            maxAge: 50 * 60 * 1000 // 50 minutes in milliseconds
+        });
+
         res.status(200).json({
             success:true,
             message:"Logged in successfully ",
-            accessToken
         })
         
     }
