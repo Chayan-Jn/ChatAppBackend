@@ -4,7 +4,6 @@ const User = require('../models/user')
 const fetchMessages = async (req, res) => {
     console.log('Fetch msg runs ')
     const receiver = await User.findOne({ username: req.params.username });
-    console.log("receiver is ", receiver.username);
     if (!receiver) {
         return res.status(500).json({
             success: false,
@@ -14,8 +13,11 @@ const fetchMessages = async (req, res) => {
     const sender = await User.findById(req.userInfo.userId);
     const usernames = [receiver.username,sender.username];
     const chatId = usernames.sort().join('_');
+    console.log("Chat is being Fetched By", sender.username);
+    console.log('Usernames ',usernames)
 
     const fetchedMessages = await Message.find({chatId:chatId}).sort({createdAt:1});
+    console.log('Fetched Messages ',fetchedMessages)
     return res.status(200).json({
         success: true,
         message: 'Messages Fetched Successfully',

@@ -44,10 +44,25 @@ const io = new Server(httpServer, {
 const userList = new Map();
 io.on('connection',(socket)=>{
     console.log(`User with socket id ${socket.id} connected`)
-    socket.on('registerUser',(userId)=>{
+    socket.on('loginUser',(userId)=>{
         userList.set(userId,socket.id);
     })
+    socket.on('send-msg',(receivedData)=>{
+        const receiverSocket = userList.get(receivedData.userId);
 
+        const now = new Date();
+        const createdAt =now.toISOString(); 
+        const updatedAt =now.toISOString();  
+        if(receiverSocket){
+            io.to(receiverSocket).emit('receive-msg',({
+                sender:receivedData.senderId,
+                receiver:receivedData.userId,
+                text:receivedData.text,
+                createdAt,
+                updatedAt
+            }))
+        }
+    })
     socket.on('disconnect',()=>{
         for(let [uid,sid] of userList){
             if(sid == socket.id) userList.delete(uid);
