@@ -11,11 +11,10 @@ const fetchMessages = async (req, res) => {
         })
     }
     const sender = await User.findById(req.userInfo.userId);
+    console.log('sender of msg is ',sender)
     const usernames = [receiver.username,sender.username];
+    console.log('Usernames ',usernames);
     const chatId = usernames.sort().join('_');
-    console.log("Chat is being Fetched By", sender.username);
-    console.log('Usernames ',usernames)
-
     const fetchedMessages = await Message.find({chatId:chatId}).sort({createdAt:1});
     console.log('Fetched Messages ',fetchedMessages)
     return res.status(200).json({

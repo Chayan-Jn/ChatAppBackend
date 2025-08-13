@@ -29,10 +29,6 @@ const registerUser = async (req, res) => {
         return res.status(200).json({
             success: true,
             message: "User registered successfully",
-            user: {
-                userId: newUser._id,
-                username: newUser.username
-            }
         });
     }
     catch (err) {
@@ -74,14 +70,14 @@ const loginUser = async (req, res) => {
         )
 
         // Clear old cookie if it exists
-        res.clearCookie('token', { path: '/' });
 
         // Set token in HttpOnly cookie
         res.cookie('token', accessToken, {
             httpOnly: true, // JS cannot access this cookie
             secure: false, // send cookie only over HTTPS in prod. If its development, secure is false 
             sameSite: 'lax', // CSRF protection
-            maxAge: 50 * 60 * 1000 // 50 minutes in milliseconds
+            maxAge: 50 * 60 * 1000, // 50 minutes in milliseconds,
+            path:"/"
         });
 
         res.status(200).json({
@@ -92,7 +88,7 @@ const loginUser = async (req, res) => {
                 userId:userExists._id
             }
         })
-        
+
     }
     catch (err) {
         res.status(500).json({
