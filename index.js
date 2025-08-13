@@ -9,7 +9,7 @@ const http = require('http');
 const user = require('./models/user.js');
 const cors = require('cors');
 const cookieParser = require('cookie-parser')
-
+const storeMessage = require('./helpers/msgStorageHelper.js');
 
 
 
@@ -47,20 +47,26 @@ io.on('connection',(socket)=>{
     socket.on('loginUser',(userId)=>{
         userList.set(userId,socket.id);
     })
-    socket.on('send-msg',(receivedData)=>{
+    socket.on('send-msg',async (receivedData)=>{
         const receiverSocket = userList.get(receivedData.userId);
 
         const now = new Date();
         const createdAt =now.toISOString(); 
-        const updatedAt =now.toISOString();  
+        const updatedAt =now.toISOString();
+        
+        const newMsg = 
+        {
+            sender:receivedData.senderId,
+            receiver:receivedData.userId,
+            text:receivedData.text,
+            chatId:receivedData.chatId,
+            createdAt,
+            updatedAt,
+        }
+        // This stores the msg in db
+        await storeMessage(newMsg);
         if(receiverSocket){
-            io.to(receiverSocket).emit('receive-msg',({
-                sender:receivedData.senderId,
-                receiver:receivedData.userId,
-                text:receivedData.text,
-                createdAt,
-                updatedAt
-            }))
+            io.to(receiverSocket).emit('receive-msg',(newMsg))
         }
     })
     socket.on('disconnect',()=>{

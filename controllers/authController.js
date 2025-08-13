@@ -73,6 +73,9 @@ const loginUser = async (req, res) => {
         {   expiresIn:'50m'}
         )
 
+        // Clear old cookie if it exists
+        res.clearCookie('token', { path: '/' });
+
         // Set token in HttpOnly cookie
         res.cookie('token', accessToken, {
             httpOnly: true, // JS cannot access this cookie
@@ -84,6 +87,10 @@ const loginUser = async (req, res) => {
         res.status(200).json({
             success:true,
             message:"Logged in successfully ",
+            user:{
+                username:username,
+                userId:userExists._id
+            }
         })
         
     }
