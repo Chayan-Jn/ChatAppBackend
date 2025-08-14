@@ -98,4 +98,37 @@ const loginUser = async (req, res) => {
         })
     }
 }
-module.exports = { registerUser,loginUser}
+const getCurrentUser = async (req,res)=>{
+
+        console.log("get current user runs")
+        const token = req.cookies?.token;
+        if(!token){
+            return res.status(400).json({
+                success:false,
+                message:"No token provided"
+            })
+        }
+        // Decode the token
+        try{
+            const decodedToken = jwt.verify(token,process.env.JWT_SECRET);
+            console.log("decoded token is ",decodedToken);
+            return res.status(200).json({
+                success:true,
+                message:"Current User fetched successfully",
+                data:{
+                    username:decodedToken.username,
+                    userId:decodedToken.userId
+
+                }
+            })
+        }
+        catch(e){
+            return res.status(500).json({
+                success:false,  
+                messsage:"Access denied, no token provided"
+            })
+        }
+}
+
+
+module.exports = { registerUser,loginUser,getCurrentUser}
