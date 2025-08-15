@@ -2,10 +2,10 @@ const Message = require('../models/message');
 const User = require('../models/user')
 const {uploadToCloudinary} = require('../helpers/cloudinaryHelper');
 
-const messageController = async (req,res)=>{
+const imageController = async (req,res)=>{
     try{
         //  /messages/:username
-        console.log("Message Controller runs ");
+        console.log("Image Controller runs ");
         const receiver = await User.findOne({username:req.params.username});
         console.log("receiver is ",receiver.username);
         if(!receiver){
@@ -14,16 +14,9 @@ const messageController = async (req,res)=>{
                 message:"Receiver not found"
             })
         }
-
-        console.log("UserInfo is ",req.userInfo);
-        
         const sender  = await User.findById(req.userInfo.userId);
-
-
-        console.log("Sender is ",sender)
         const usernames = [receiver.username,sender.username];
         const chatId = usernames.sort().join('_');
-        const {text} = req.body;
 
         let imageUrl = null;
         let publicId = null;
@@ -34,15 +27,14 @@ const messageController = async (req,res)=>{
             publicId = result.publicId;
         }
         
-        if(!text && !imageUrl){ // If both are absent, cant send msg
+        if(!imageUrl){ 
             return res.status(400).json({
                 success:false,
-                message:"No message found"
+                message:"No image found"
             })
         }
         
         const newMessage = await Message.create({
-            text,
             imageUrl,
             sender:sender._id,
             receiver:receiver._id,
@@ -51,7 +43,7 @@ const messageController = async (req,res)=>{
         res.status(200).json({
             success:true,
             message:"Message sent successfully ",
-            messageID:newMessage._id
+            msgData:newMessage
         })
     
     }
@@ -64,4 +56,4 @@ const messageController = async (req,res)=>{
     }
 }
 
-module.exports = messageController;
+module.exports = imageController;

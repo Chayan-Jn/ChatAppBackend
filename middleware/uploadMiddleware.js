@@ -28,7 +28,7 @@ module.exports = multer(
 
 )
 
-// 🔁 Here's the difference:
+//  Here's the difference:
 // Storage type	Where file is saved	What to upload to Cloudinary
 // diskStorage	File is saved to disk (e.g. uploads/image_123.png)	✅ Upload req.file.path
 // memoryStorage	File is stored in memory (req.file.buffer)	✅ Upload req.file.buffer

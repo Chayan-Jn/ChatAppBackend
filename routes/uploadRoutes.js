@@ -2,9 +2,9 @@ const express = require('express');
 const router = express.Router();
 const authMiddleware = require('../middleware/authMiddleware')
 const uploadMiddleware = require('../middleware/uploadMiddleware')
-const messageController = require('../controllers/messageController');
+const imageController = require('../controllers/imageController');
 
-router.post('/messages/:username',authMiddleware,uploadMiddleware.single('image'),messageController);
+router.post('/images/:username',authMiddleware,uploadMiddleware.single('image'),imageController);
 
 
 module.exports = router;

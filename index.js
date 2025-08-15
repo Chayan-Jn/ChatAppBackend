@@ -48,26 +48,25 @@ io.on('connection',(socket)=>{
         userList.set(userId,socket.id);
     })
     socket.on('send-msg',async (receivedData)=>{
-        const receiverSocket = userList.get(receivedData.userId);
+        const receiverSocket = userList.get(receivedData.receiver);
 
-        const now = new Date();
-        const createdAt =now.toISOString(); 
-        const updatedAt =now.toISOString();
+
+        const now = new Date().toISOString(); 
         
-        const newMsg = 
-        {
-            sender:receivedData.senderId,
-            receiver:receivedData.userId,
-            text:receivedData.text,
-            chatId:receivedData.chatId,
-            createdAt,
-            updatedAt,
-        }
-        // This stores the msg in db
-        await storeMessage(newMsg);
+        const newMsg = {
+            sender: receivedData.sender,
+            receiver: receivedData.receiver,
+            text: receivedData.text || '',
+            imageUrl: receivedData.imageUrl || null,
+            chatId: receivedData.chatId,
+            createdAt: now,
+            updatedAt: now
+        };
         if(receiverSocket){
             io.to(receiverSocket).emit('receive-msg',(newMsg))
         }
+        // This stores the msg in db
+        await storeMessage(newMsg);
     })
     socket.on('disconnect',()=>{
         for(let [uid,sid] of userList){
