@@ -8,7 +8,7 @@ const chatRoutes = require('./routes/chatRoutes.js')
 const {Server} = require('socket.io')
 const http = require('http');
 const user = require('./models/user.js');
-const cors = require('cors');
+// const cors = require('cors');
 const cookieParser = require('cookie-parser')
 const storeMessage = require('./helpers/msgStorageHelper.js');
 
@@ -19,7 +19,7 @@ connectToDB()
 
 
 const app = express();
-const PORT = process.env.PORT;
+const PORT = process.env.PORT || 3000;
 
 app.use(express.json())
 app.use(cookieParser())
