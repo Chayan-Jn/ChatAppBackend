@@ -1,5 +1,6 @@
 const connectToDB = require('./database/db.js')
 const express = require('express');
+const path = require('path')
 const authRoutes = require('./routes/authRoutes.js')
 require('dotenv').config()
 const uploadRoutes = require('./routes/uploadRoutes.js')
@@ -22,13 +23,16 @@ const PORT = process.env.PORT;
 
 app.use(express.json())
 app.use(cookieParser())
+app.use(express.static(path.join(__dirname, 'frontend/dist')));
+
 
 //cors
-app.use(cors({
-    origin: ["http://localhost:5173"],
-    methods: ['GET', 'POST'],
-    credentials: true
-}));
+// Not needed if both front and backend are hosted on same origin
+// app.use(cors({
+//     origin: ["http://localhost:5173"],
+//     methods: ['GET', 'POST'],
+//     credentials: true
+// }));
 
 
 // Socket Setup
@@ -80,7 +84,10 @@ app.use(express.json());
 app.use('/app',authRoutes)
 app.use('/app',uploadRoutes);
 app.use('/app',chatRoutes);
-
+app.get(/(.*)/, (req, res) => {
+    res.sendFile(path.resolve(__dirname, 'frontend', 'dist', 'index.html'));
+  });
+  
 
 httpServer.listen(PORT,()=>{
     console.log('Server is listening on Port ',PORT)
