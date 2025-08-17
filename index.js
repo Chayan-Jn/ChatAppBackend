@@ -64,7 +64,10 @@ io.on('connection',(socket)=>{
             io.to(receiverSocket).emit('receive-msg',(newMsg))
         }
         // This stores the msg in db
-        await storeMessage(newMsg);
+        // but not images because they are already being stored by imageController, so this prevents duplication
+        if(!receivedData.imageUrl){
+            await storeMessage(newMsg);
+        }
     })
     socket.on('disconnect',()=>{
         for(let [uid,sid] of userList){
